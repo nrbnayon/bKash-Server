@@ -1,5 +1,3 @@
-import { type } from "express/lib/response";
-import { min } from "moment-timezone";
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -16,17 +14,19 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     number: {
-      type: Number,
-      min: 11,
-      max: 14,
+      type: String,
       required: true,
       unique: true,
     },
     password: {
-      type: Number,
-      min: 5,
-      max: 5,
+      type: String,
       required: true,
+    },
+    role: {
+      type: String,
+    },
+    balance: {
+      type: Number,
     },
   },
   { timestamps: true }
