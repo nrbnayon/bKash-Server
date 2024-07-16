@@ -1,28 +1,31 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
-const moment = require("moment-timezone");
-//env
-require("dotenv").config();
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import jwt from "jsonwebtoken";
+import moment from "moment-timezone";
+import dotenv from "dotenv";
+import { MongoClient, ServerApiVersion, ObjectId } from "mongodb";
 
+dotenv.config();
+
+const app = express();
 const port = process.env.PORT || 5000;
 const corsOptions = {
   origin: ["http://localhost:5173"],
   credentials: true,
 };
 
-//middleware
+// Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = process.env.MONGODB;
 if (!uri) {
+  console.error("MongoDB connection string is missing!");
   process.exit(1);
 }
 
-//MongoDB
+// MongoDB
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -31,12 +34,21 @@ const client = new MongoClient(uri, {
   },
 });
 
+mongoose
+  .connect(uri)
+  .then(() => {
+    console.log("DB Connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 async function run() {
   try {
     await client.connect();
     const userCollection = client.db("bKash").collection("AllUser");
 
-    //JWT
+    // JWT
     app.post("/jwt", async (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
@@ -45,7 +57,7 @@ async function run() {
       res.send({ token });
     });
 
-    // verify token
+    // Verify token
     const verifyToken = (req, res, next) => {
       if (!req.headers.authorization) {
         return res.status(401).send({ message: "forbidden access" });
@@ -80,3 +92,15 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Server Running on port ${port}`);
 });
+
+// mongoose
+//   .connect(uri, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => {
+//     console.log("DB Connected");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
