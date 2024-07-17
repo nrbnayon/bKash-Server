@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
-import { errorHandler } from "./utils/error.js";
 
 dotenv.config();
 
@@ -61,7 +60,7 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-// Routes
+// Routess
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 

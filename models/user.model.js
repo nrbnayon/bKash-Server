@@ -24,9 +24,12 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
+      required: true,
+      enum: ["User", "Agent", "Admin"],
     },
     balance: {
       type: Number,
+      default: 40,
     },
   },
   { timestamps: true }
